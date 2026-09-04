@@ -432,7 +432,7 @@ MonoBehaviour:
   - Deadline
   - Focus
   spawnInterval: 2
-  spawnPosition: {x: 600, y: 0}
+  spawnPosition: {x: 0, y: 400}
   missLine: {fileID: 1508730003}
 --- !u!4 &1628778543
 Transform:
