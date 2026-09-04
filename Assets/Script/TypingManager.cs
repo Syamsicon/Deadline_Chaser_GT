@@ -6,7 +6,7 @@ public class TypingManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI wordText;
     [SerializeField] private string targetWord = "Obey";
-    [SerializeField] private float moveSpeed = 100f; 
+    [SerializeField] private float moveSpeed = 150f; 
     public static Transform missLineRef;
 
     private int typedIndex = 0;
@@ -31,7 +31,7 @@ public class TypingManager : MonoBehaviour
         // gerak ke bawah tiap frame
         rectTransform.anchoredPosition += Vector2.down * moveSpeed * Time.deltaTime;
 
-        // cek kalau udah lewat batas kiri = miss
+        // cek kalau udah lewat batas atas = miss
         if (missLineRef != null && transform.position.y <= missLineRef.position.y)
         {
             Debug.Log("Miss! Word reached the line: " + targetWord);
