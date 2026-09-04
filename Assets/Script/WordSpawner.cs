@@ -19,18 +19,18 @@ public class WordSpawner : MonoBehaviour
 
     void SpawnWord()
     {
-        // hanya spawn kalau belum ada kata aktif (biar gak numpuk dulu di tahap awal)
-        if (TypingManager.ActiveWord != null) return;
+        Lane[] lanes = { Lane.Left, Lane.Center, Lane.Right };
+        int laneIndex = Random.Range(0, lanes.Length);
+        Lane ChoosenLane = lanes[laneIndex];
 
         GameObject newWord = Instantiate(wordPrefab, canvasTransform);
         RectTransform rt = newWord.GetComponent<RectTransform>();
-
-        // randomizer lane spawn
-        float randomX = laneXPosition [Random.range(0, wordList.Length)];
-        rt.anchoredPosition = new vector2(randomX, spawnPosition.y);
+        rt.anchoredPosition = new Vector2(laneXPosition[laneIndex], spawnPosition.y);
 
         string randomWord = wordList[Random.Range(0, wordList.Length)];
         TypingManager tm = newWord.GetComponent<TypingManager>();
+        tm.MyLane = ChoosenLane;
         tm.SetWord(randomWord);
+
     }
 }

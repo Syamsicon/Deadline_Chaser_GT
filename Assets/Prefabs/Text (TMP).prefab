@@ -152,3 +152,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   wordText: {fileID: 0}
   targetWord: Obey
+  moveSpeed: 50
+  MyLane: 0
