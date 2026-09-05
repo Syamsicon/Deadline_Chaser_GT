@@ -1,4 +1,5 @@
 // TypingManager.cs — updated version
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -8,19 +9,18 @@ public class TypingManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI wordText;
     [SerializeField] private string targetWord = "Obey";
-    [SerializeField] private float moveSpeed = 150f; 
+    [SerializeField] private float moveSpeed = 100f; 
     
     public Lane MyLane;
     public static Transform missLineRef;
 
-    public static TypingManager ActiveWordLeft;
-    public static TypingManager ActiveWordCenter;
-    public static TypingManager ActiveWordRight;
+    //Q-ing lane closest to missLine
+    public static List<TypingManager> LeftQueue = new List<TypingManager>();
+    public static List<TypingManager> CenterQueue = new List<TypingManager>();
+    public static List<TypingManager> RightQueue = new List<TypingManager>();
     
     private int typedIndex = 0;
     private RectTransform rectTransform;
-
-    public static TypingManager ActiveWord; // biar cuma 1 kata yang nerima input dulu (simplifikasi awal)
 
     void Start()
     {
@@ -31,12 +31,12 @@ public class TypingManager : MonoBehaviour
         wordText.text = targetWord;
         typedIndex = 0;
 
-        SetActiveSlot(this); // inisialisasi ke slot masing masing
+        GetQueue().Add(this);
     }
 
     void OnDestroy()
     {
-        if (GetActiveSlot() == this) SetActiveSlot(null);
+        GetQueue().Remove(this);
     }
 
     void Update()
@@ -53,6 +53,7 @@ public class TypingManager : MonoBehaviour
         }
 
         if (MyLane != LaneSwitcher.CurrentActiveLane) return;
+        if (!IsFrontOfQueue()) return;
 
         foreach (char c in Input.inputString)
         {
@@ -61,24 +62,20 @@ public class TypingManager : MonoBehaviour
         }
     }
 
-    TypingManager GetActiveSlot()
+    List<TypingManager> GetQueue()
     {
         return MyLane switch
         {
-            Lane.Left => ActiveWordLeft,
-            Lane.Center => ActiveWordCenter,
-            _ => ActiveWordRight,
+            Lane.Left => LeftQueue,
+            Lane.Center => CenterQueue,
+            _ => RightQueue,
         };
     }
 
-    void SetActiveSlot(TypingManager tm)
+    bool IsFrontOfQueue()
     {
-        switch (MyLane)
-        {
-            case Lane.Left: ActiveWordLeft = tm; break;
-            case Lane.Center: ActiveWordCenter = tm; break;
-            case Lane.Right: ActiveWordRight = tm; break;
-        }
+        var q = GetQueue();
+        return q.Count > 0 && q[0] == this;
     }
 
     public void SetWord(string newWord)
@@ -102,7 +99,6 @@ public class TypingManager : MonoBehaviour
             if (typedIndex >= targetWord.Length)
             {
                 Debug.Log("Word Complete! " + targetWord);
-                ActiveWord = null;
                 Destroy(gameObject);
             }
         }

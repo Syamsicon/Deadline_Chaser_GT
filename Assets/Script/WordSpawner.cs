@@ -19,9 +19,8 @@ public class WordSpawner : MonoBehaviour
 
     void SpawnWord()
     {
-        Lane[] lanes = { Lane.Left, Lane.Center, Lane.Right };
-        int laneIndex = Random.Range(0, lanes.Length);
-        Lane ChoosenLane = lanes[laneIndex];
+        int laneIndex = Random.Range(0, laneXPosition.Length); // 0=left, 1=center, 2=right
+        Lane ChoosenLane = (Lane)laneIndex;
 
         GameObject newWord = Instantiate(wordPrefab, canvasTransform);
         RectTransform rt = newWord.GetComponent<RectTransform>();
