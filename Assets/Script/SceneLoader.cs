@@ -5,7 +5,7 @@ public class SceneLoader : MonoBehaviour
 {
     public void LoadGameplayScene()
     {
-        SceneManager.LoadScene("Gameplay"); // harus SAMA PERSIS nama scene-nya
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void LoadMainMenuScene()
@@ -13,7 +13,7 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    // opsional: kalau mau reusable buat scene manapun tanpa bikin function baru tiap kali
+    //template
     public void LoadSceneByName(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
