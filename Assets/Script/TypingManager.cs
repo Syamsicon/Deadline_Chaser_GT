@@ -48,6 +48,7 @@ public class TypingManager : MonoBehaviour
         if (missLineRef != null && transform.position.y <= missLineRef.position.y)
         {
             Debug.Log("Miss! Word reached the line: " + targetWord);
+            HeartManager.Instance.LoseLife(); // pastiin baris ini ada
             Destroy(gameObject);
             return;
         }
