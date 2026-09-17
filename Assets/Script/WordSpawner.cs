@@ -10,7 +10,7 @@ public class WordSpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 0.2f; // detik antar spawn
     [SerializeField] private Vector2 spawnPosition = new Vector2(0f, 400f); // posisi awal atas
     [SerializeField] private Transform missLine;
-
+    public static bool isGameOver = false;
     void Start()
     {
         TypingManager.missLineRef = missLine;
@@ -19,6 +19,7 @@ public class WordSpawner : MonoBehaviour
 
     void SpawnWord()
     {
+        if (isGameOver || PauseManager.isPaused) return;
         int laneIndex = Random.Range(0, laneXPosition.Length); // 0=left, 1=center, 2=right
         Lane ChoosenLane = (Lane)laneIndex;
 

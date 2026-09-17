@@ -12,6 +12,7 @@ public class HeartManager : MonoBehaviour
 
     private int currentLives;
     private bool isGameOver = false;
+    public static bool GameIsOver = false;
 
     void Awake()
     {
@@ -31,6 +32,8 @@ public class HeartManager : MonoBehaviour
         // ganti sprite heart TERAKHIR yang masih penuh jadi broken
         if (currentLives >= 0 && currentLives < hearts.Length)
             hearts[currentLives].sprite = brokenHeartSprite;
+        
+        SFXManager.Instance.PlayHeartLossSound();
 
         Debug.Log("Life lost! Remaining: " + currentLives);
 
@@ -45,7 +48,11 @@ public class HeartManager : MonoBehaviour
         isGameOver = true;
         Debug.Log("GAME OVER!");
 
+        WordSpawner.isGameOver = true;
+        ScoreManager.Instance.DisplayFinalScore();
+
         if (gameOverPanel != null)
+            gameOverPanel.transform.SetAsLastSibling();
             gameOverPanel.SetActive(true);
 
         Time.timeScale = 0f; // hentikan semua gerakan (kata berhenti jatuh, dll)
@@ -55,6 +62,7 @@ public class HeartManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f; // kembalikan waktu normal SEBELUM pindah scene
+        WordSpawner.isGameOver = false;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         );

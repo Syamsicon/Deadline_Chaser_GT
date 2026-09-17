@@ -21,6 +21,10 @@ public class TypingManager : MonoBehaviour
     
     private int typedIndex = 0;
     private RectTransform rectTransform;
+    private float startY;
+
+    private float wordStartTime;
+    private bool hasStartedTyping = false;
 
     void Start()
     {
@@ -30,6 +34,7 @@ public class TypingManager : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         wordText.text = targetWord;
         typedIndex = 0;
+        startY = transform.position.y;
 
         GetQueue().Add(this);
     }
@@ -49,6 +54,7 @@ public class TypingManager : MonoBehaviour
         {
             Debug.Log("Miss! Word reached the line: " + targetWord);
             HeartManager.Instance.LoseLife(); // pastiin baris ini ada
+            JudgmentManager.Instance.ShowJudgment(JudgmentType.Miss);
             Destroy(gameObject);
             return;
         }
@@ -90,22 +96,46 @@ public class TypingManager : MonoBehaviour
     {
         if (typedIndex >= targetWord.Length) return;
 
+        if(!hasStartedTyping)
+        {
+            wordStartTime = Time.time;
+            hasStartedTyping = true;
+        }
+
         char expectedChar = targetWord[typedIndex];
 
         if (char.ToLower(typedChar) == char.ToLower(expectedChar))
         {
-            typedIndex++;
-            UpdateWordDisplay();
+            typedIndex++;                  // TAMBAH BALIK — maju 1 huruf
+            UpdateWordDisplay();           // TAMBAH BALIK — update warna huruf
+            SFXManager.Instance.PlayTypeSound();
 
+            // baru cek "selesai" kalau SEMUA huruf udah match
             if (typedIndex >= targetWord.Length)
             {
                 Debug.Log("Word Complete! " + targetWord);
+
+                float totalDistance = startY - missLineRef.position.y;
+                float remainingDistance = transform.position.y - missLineRef.position.y;
+                float ratio = remainingDistance / totalDistance;
+
+                JudgmentType judgment;
+                if (ratio > 0.5f) judgment = JudgmentType.Perfect;
+                else if (ratio > 0.25f) judgment = JudgmentType.Good;
+                else judgment = JudgmentType.Bad;
+
+                JudgmentManager.Instance.ShowJudgment(judgment);
+
+                float timeTaken = Time.time - wordStartTime;
+                WPMManager.Instance.AddCompletedWord(timeTaken);
+
                 Destroy(gameObject);
             }
         }
         else
         {
             Debug.Log("Miss! expected: " + expectedChar + " got: " + typedChar);
+            SFXManager.Instance.PlayWrongSound();
         }
     }
 
